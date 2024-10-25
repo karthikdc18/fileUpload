@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+</head>
+<body>
+  <h1>PDF File Upload</h1>
+  <form id="uploadForm" enctype="multipart/form-data" method="POST">
+    <input type="file" id="fileInput" name="file" accept="application/pdf" />
+    <button type="submit">Upload File</button>
+  </form>
+
+  <div id="status"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Please select a file to upload.');
+        return;
+      }
+
+      formData.append('file', file);
+
+      fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('status').innerText = data;
+      })
+      .catch(error => {
+        console.error('Error uploading file:', error);
+        document.getElementById('status').innerText = 'File upload failed.';
+      });
+    });
+  </script>
+</body>
+</html>
